@@ -1,0 +1,58 @@
+services:
+  app:
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+
+    command: npm run dev
+
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: package.json
+
+    environment:
+    - NODE_ENV=development
+    - TERM=xterm-256color
+    - PORT=${PORT}
+    - AWS_ENDPOINT=${AWS_ENDPOINT}
+
+    ports:
+      - "${PORT}:${PORT}"
+        
+    volumes:
+      - /app/node_modules
+        
+  localstack:
+    image: localstack/localstack:latest
+    
+    container_name: localstack
+    
+    ports:
+      - "4566:4566" 
+
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+    
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+    healthcheck:
+      test: ["CMD", "curl", "-f" , 'http://localstack:4566/_localstack/health']
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 20s
