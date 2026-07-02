@@ -11,7 +11,7 @@ export class InMemoryHotelSearchService implements HotelSearchService {
     const sanitizedCityName = city.trim().toLowerCase();
 
     return this.hotels.filter((hotel: Hotel) =>
-      hotel.city.toLowerCase().match(sanitizedCityName),
+      hotel.city.toLowerCase().includes(sanitizedCityName),
     );
   }
 }

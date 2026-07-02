@@ -1,25 +1,46 @@
 export interface User {
   id: string;
-  email: string;
+  username: string;
   password: string;
-  name: string;
+}
+
+export interface PublicUser {
+  id: string;
+  username: string;
 }
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface LoginResult {
   success: boolean;
   message: string;
-  user?: User;
+  token?: string;
+  user?: PublicUser;
 }
 
 export interface LoginService {
   login(request: LoginRequest): LoginResult;
 }
 
+export interface RegisterRequest {
+  username: string;
+  password: string;
+}
+
+export interface RegisterResult {
+  success: boolean;
+  message: string;
+  user?: PublicUser;
+}
+
+export interface RegisterService {
+  register(request: RegisterRequest): RegisterResult;
+}
+
 export interface UserRepository {
-  findUserByEmail(email: string): User | undefined;
+  findUserByUsername(username: string): User | undefined;
+  saveUser(user: User): void;
 }

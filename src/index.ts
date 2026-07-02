@@ -2,10 +2,18 @@ import { createApp } from "./controller/create_app.js";
 import { InMemoryHotelSearchService } from "./repository/in_mem.js";
 import { createInMemoryUserRepository } from "./repository/user_repository.js";
 import { createLoginService } from "./service/login_service.js";
+import { createRegisterService } from "./service/register_service.js";
 import { type Hotel } from "./types/hotel_type.js";
 
 const parsePort = (port: string | undefined) => {
   return typeof port === "string" && port.length > 0 ? Number(port) : 3000;
+};
+
+const getJwtSecret = (): string => {
+  const secret = process.env.JWT_SECRET;
+  return typeof secret === "string" && secret.length > 0
+    ? secret
+    : "local-development-secret";
 };
 
 const main = (): void => {
@@ -34,13 +42,18 @@ const main = (): void => {
   ];
 
   const port = parsePort(process.env.PORT);
+  const jwtSecret = getJwtSecret();
 
   const userRepository = createInMemoryUserRepository();
-  const loginService = createLoginService(userRepository);
+  const loginService = createLoginService(userRepository, jwtSecret);
+  const hotelSearchService = new InMemoryHotelSearchService(hotels);
+  const registerService = createRegisterService(userRepository);
 
   const app = createApp({
-    hotelSearchService: new InMemoryHotelSearchService(hotels),
+    hotelSearchService,
     loginService,
+    registerService,
+    loggerUtility: console.log,
   });
 
   app.listen(port, () => {

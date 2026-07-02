@@ -1,4 +1,4 @@
-import { type LoginService } from "./user_type.js";
+import { type LoginService, type RegisterService } from "./user_type.js";
 
 export interface Hotel {
   id: string;
@@ -15,4 +15,6 @@ export interface HotelSearchService {
 export interface AppDependencies {
   hotelSearchService: HotelSearchService;
   loginService: LoginService;
+  registerService: RegisterService;
+  loggerUtility: (message: string) => void;
 }

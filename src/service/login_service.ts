@@ -1,45 +1,61 @@
+import jwt from "jsonwebtoken";
 import {
   type LoginRequest,
   type LoginResult,
   type LoginService,
+  type PublicUser,
+  type UserRepository,
 } from "../types/user_type.js";
-import { type UserRepository } from "../types/user_type.js";
+
+const createToken = (user: PublicUser, jwtSecret: string): string => {
+  return jwt.sign({ sub: user.id, username: user.username }, jwtSecret, {
+    expiresIn: "45m",
+  });
+};
+
+const createPublicUser = ({
+  id,
+  username,
+}: {
+  id: string;
+  username: string;
+}): PublicUser => {
+  return { id, username };
+};
 
 export const createLoginService = (
   userRepository: UserRepository,
+  jwtSecret: string,
 ): LoginService => {
   return {
     login(request: LoginRequest): LoginResult {
-      const normalizedEmail = request.email.trim().toLowerCase();
-      const normalizedPassword = request.password.trim();
+      const username = request.username.trim().toLowerCase();
+      const password = request.password.trim();
 
-      if (normalizedEmail === "" || normalizedPassword === "") {
+      if (username === "" || password === "") {
         return {
           success: false,
-          message: "Email and password are required.",
+          message: "Username and password are required.",
         };
       }
 
-      const user = userRepository.findUserByEmail(normalizedEmail);
+      const user = userRepository.findUserByUsername(username);
 
-      if (user === undefined) {
-        return {
-          success: false,
-          message: "Invalid credentials.",
-        };
-      }
-
-      if (user.password !== normalizedPassword) {
+      if (user === undefined || user.password !== password) {
         return {
           success: false,
           message: "Invalid credentials.",
         };
       }
+
+      const publicUser = createPublicUser(user);
+      const token = createToken(publicUser, jwtSecret);
 
       return {
         success: true,
         message: "Login successful.",
-        user,
+        token: `Bearer ${token}`,
+        user: publicUser,
       };
     },
   };

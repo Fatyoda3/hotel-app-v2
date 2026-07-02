@@ -5,16 +5,16 @@ export const createHotelSearchHandler = (
   hotelSearchService: HotelSearchService,
 ) => {
   return (request: Request, response: Response): void => {
-    const cityName = request.query.city;
+    const city = request.query.city;
 
-    if (typeof cityName !== "string" || cityName.trim() === "") {
+    if (typeof city !== "string" || city.trim() === "") {
       response
         .status(400)
         .json({ error: "The city query parameter is required." });
       return;
     }
 
-    const hotels = hotelSearchService.searchHotels(cityName);
+    const hotels = hotelSearchService.searchHotels(city);
     response.status(200).json({ hotels });
   };
 };

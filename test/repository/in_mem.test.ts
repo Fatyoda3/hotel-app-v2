@@ -1,0 +1,38 @@
+import { InMemoryHotelSearchService } from "../../src/repository/in_mem.js";
+import { type Hotel } from "../../src/types/hotel_type.js";
+import { describe, it, expect, beforeEach } from "@jest/globals";
+describe("InMemoryHotelSearchService", () => {
+  const mockHotels: Hotel[] = [
+    {
+      id: "1",
+      name: "Grand Central",
+      city: "New York",
+      price: 220,
+      rating: 4.8,
+    },
+    { id: "2", name: "Sunny Beach", city: "Miami", price: 260, rating: 4.7 },
+  ];
+
+  let service: InMemoryHotelSearchService;
+
+  beforeEach(() => {
+    service = new InMemoryHotelSearchService(mockHotels);
+  });
+
+  it("should return hotels that match the city name", () => {
+    const results = service.searchHotels("New York");
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe("Grand Central");
+  });
+
+  it("should be case-insensitive", () => {
+    const results = service.searchHotels("miami");
+    expect(results).toHaveLength(1);
+    expect(results[0].name).toBe("Sunny Beach");
+  });
+
+  it("should return an empty array if no hotels match", () => {
+    const results = service.searchHotels("Chicago");
+    expect(results).toHaveLength(0);
+  });
+});
