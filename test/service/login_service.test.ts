@@ -1,10 +1,10 @@
 import { createLoginService } from "../../src/service/login_service.js";
 import { createInMemoryUserRepository } from "../../src/repository/user_repository.js";
-import { type UserRepository } from "../../src/types/user_type.js";
+import { type UserRepo } from "../../src/types/user_type.js";
 import { describe, it, expect, beforeEach } from "@jest/globals";
 
 describe("Login Service", () => {
-  let userRepository: UserRepository;
+  let userRepository: UserRepo;
   let loginService: ReturnType<typeof createLoginService>;
   const jwtSecret = "test-secret";
 

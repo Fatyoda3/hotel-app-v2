@@ -1,45 +1,28 @@
 import jwt from "jsonwebtoken";
-import {
-  type LoginRequest,
-  type LoginResult,
-  type LoginService,
-  type PublicUser,
-  type UserRepository,
-} from "../types/user_type.js";
+import * as T from "../types/user_type.js";
+import { hasInvalidCredentials } from "../utils/utils.js";
 
-const createToken = (user: PublicUser, jwtSecret: string): string => {
-  return jwt.sign({ sub: user.id, username: user.username }, jwtSecret, {
-    expiresIn: "45m",
-  });
-};
-
-const createPublicUser = ({
-  id,
-  username,
-}: {
-  id: string;
-  username: string;
-}): PublicUser => {
-  return { id, username };
+const createToken = (user: T.PublicUser, jwtSecret: string): string => {
+  const payload = { sub: user.id, username: user.username };
+  return jwt.sign(payload, jwtSecret, { expiresIn: "45m" });
 };
 
 export const createLoginService = (
-  userRepository: UserRepository,
-  jwtSecret: string,
-): LoginService => {
+  userRepo: T.UserRepo,
+  secret: string,
+): T.LoginService => {
   return {
-    login(request: LoginRequest): LoginResult {
+    login(request: T.LoginRequest): T.LoginResult {
       const username = request.username.trim().toLowerCase();
       const password = request.password.trim();
+      const user = userRepo.findUserByUsername(username);
 
-      if (username === "" || password === "") {
+      if (hasInvalidCredentials(username, password)) {
         return {
           success: false,
           message: "Username and password are required.",
         };
       }
-
-      const user = userRepository.findUserByUsername(username);
 
       if (user === undefined || user.password !== password) {
         return {
@@ -48,8 +31,8 @@ export const createLoginService = (
         };
       }
 
-      const publicUser = createPublicUser(user);
-      const token = createToken(publicUser, jwtSecret);
+      const publicUser: T.PublicUser = { id: user.id, username: user.username };
+      const token = createToken(publicUser, secret);
 
       return {
         success: true,

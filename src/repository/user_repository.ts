@@ -1,8 +1,7 @@
-import { type User, type UserRepository } from "../types/user_type.js";
+import { type User, type UserRepo } from "../types/user_type.js";
 
-const users: User[] = [];
-
-export const createInMemoryUserRepository = (): UserRepository => {
+export const createInMemoryUserRepository = (): UserRepo => {
+  const users: User[] = [];
   return {
     findUserByUsername(username: string): User | undefined {
       const normalizedUsername = username.trim().toLowerCase();
@@ -10,6 +9,7 @@ export const createInMemoryUserRepository = (): UserRepository => {
         (user: User) => user.username.toLowerCase() === normalizedUsername,
       );
     },
+
     saveUser(user: User): void {
       users.push(user);
     },

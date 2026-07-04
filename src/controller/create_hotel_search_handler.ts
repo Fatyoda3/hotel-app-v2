@@ -1,3 +1,4 @@
+import { searchHotel } from "../service/search_service.js";
 import { HotelSearchService } from "../types/hotel_type.js";
 import { type Request, type Response } from "express";
 
@@ -6,15 +7,12 @@ export const createHotelSearchHandler = (
 ) => {
   return (request: Request, response: Response): void => {
     const city = request.query.city;
+    const result = searchHotel(city as string, hotelSearchService);
 
-    if (typeof city !== "string" || city.trim() === "") {
-      response
-        .status(400)
-        .json({ error: "The city query parameter is required." });
+    if (result.error !== undefined) {
+      response.status(400).json({ error: result.error, hotels: [] });
       return;
     }
-
-    const hotels = hotelSearchService.searchHotels(city);
-    response.status(200).json({ hotels });
+    response.status(200).json({ hotels: result.hotels });
   };
 };

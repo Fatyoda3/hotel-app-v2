@@ -8,14 +8,10 @@ import { LoginService, RegisterService } from "../../src/types/user_type.js";
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 
 describe("GET /api/search/hotels", () => {
-  // ... test logic remains exactly the same
-});
-describe("GET /api/search/hotels", () => {
   let app: ReturnType<typeof createApp>;
   let mockHotelSearchService: jest.Mocked<HotelSearchService>;
 
   beforeEach(() => {
-    // Mock the dependencies
     mockHotelSearchService = {
       searchHotels: jest.fn(),
     };

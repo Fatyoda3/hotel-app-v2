@@ -2,18 +2,19 @@ import {
   type RegisterRequest,
   type RegisterResult,
   type RegisterService,
-  type UserRepository,
+  type UserRepo,
 } from "../types/user_type.js";
+import { hasInvalidCredentials } from "../utils/utils.js";
 
 export const createRegisterService = (
-  userRepository: UserRepository,
+  userRepository: UserRepo,
 ): RegisterService => {
   return {
     register(request: RegisterRequest): RegisterResult {
       const username = request.username.trim();
       const password = request.password.trim();
 
-      if (username === "" || password === "") {
+      if (hasInvalidCredentials(username, password)) {
         return {
           success: false,
           message: "Username, and password are required.",
@@ -29,11 +30,7 @@ export const createRegisterService = (
         };
       }
 
-      const newUser = {
-        id: crypto.randomUUID(),
-        username: request.username.trim(),
-        password: password,
-      };
+      const newUser = { id: crypto.randomUUID(), username, password };
 
       userRepository.saveUser(newUser);
 

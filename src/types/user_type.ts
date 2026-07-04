@@ -40,7 +40,7 @@ export interface RegisterService {
   register(request: RegisterRequest): RegisterResult;
 }
 
-export interface UserRepository {
+export interface UserRepo {
   findUserByUsername(username: string): User | undefined;
   saveUser(user: User): void;
 }
