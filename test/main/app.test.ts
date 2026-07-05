@@ -2,7 +2,7 @@ import request from "supertest";
 import { createApp } from "../../src/controller/create_app.js";
 import { createInMemoryUserRepository } from "../../src/repository/user_repository.js";
 import { createLoginService } from "../../src/service/login_service.js";
-import { InMemoryHotelSearchService } from "../../src/repository/in_mem.js";
+import { InMemoryHotelRepo } from "../../src/repository/hotel_repository.js";
 import { Hotel } from "../../src/types/hotel_type.js";
 import { createRegisterService } from "../../src/service/register_service.js";
 import {
@@ -23,6 +23,7 @@ describe("Hotel API Acceptance Tests", () => {
       city: "Tokyo",
       price: 150,
       rating: 4.9,
+      rooms: 10,
     },
   ];
 
@@ -32,7 +33,7 @@ describe("Hotel API Acceptance Tests", () => {
       compare: (p, h) => p === h,
       encrypt: (p) => p,
     });
-    const hotelSearchService = new InMemoryHotelSearchService(seedHotels);
+    const hotelSearchService = new InMemoryHotelRepo(seedHotels);
 
     const registerService = createRegisterService
       ? createRegisterService(userRepository, {

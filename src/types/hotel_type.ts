@@ -13,9 +13,10 @@ export interface Hotel {
   city: string;
   price: number;
   rating: number;
+  rooms: number;
 }
 
-export interface HotelSearchService {
+export interface hotelRepo {
   searchHotels(city: string): Hotel[];
   searchHotelById(hotel_id: number): Hotel;
   createBooking(

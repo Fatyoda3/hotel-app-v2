@@ -1,9 +1,6 @@
-import { type HotelSearchService } from "../types/hotel_type.js";
+import { type hotelRepo } from "../types/hotel_type.js";
 
-export const searchHotel = (
-  city: string,
-  hotelSearchService: HotelSearchService,
-) => {
+export const searchHotel = (city: string, hotelSearchService: hotelRepo) => {
   if (typeof city !== "string" || city.trim() === "") {
     return { error: "The city query parameter is required.", hotels: [] };
   }
@@ -14,7 +11,7 @@ export const searchHotel = (
 
 export const searchHotelById = (
   hotel_id: number,
-  hotelSearchService: HotelSearchService,
+  hotelSearchService: hotelRepo,
 ) => {
   const hotel = hotelSearchService.searchHotelById(hotel_id);
   return hotel;

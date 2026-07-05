@@ -15,7 +15,7 @@ export const parsePort = (port: string | undefined) => {
   return !isNaN(parsedPort) ? parsedPort : 3000;
 };
 
-export const getJwtSecret = (secret: string | undefined): string => {
+export const parseSecret = (secret: string | undefined): string => {
   return typeof secret === "string" && secret.length > 0
     ? secret
     : "fake-secret";
@@ -29,10 +29,13 @@ export const hasInvalidCredentials = (
 type EncryptFn = (password: string) => string;
 type CompareFn = (password: string, hashed: string) => boolean;
 
-export const passwordUtility = (encryptFn: EncryptFn, compareFn: CompareFn) => {
+export const createPassUtility = (
+  encryptFn: EncryptFn,
+  compareFn: CompareFn,
+) => {
   return {
     encrypt: encryptFn,
     compare: compareFn,
   };
 };
-export type PasswordUtility = ReturnType<typeof passwordUtility>;
+export type PasswordUtility = ReturnType<typeof createPassUtility>;

@@ -1,8 +1,8 @@
-import { InMemoryHotelSearchService } from "../../src/repository/in_mem.js";
+import { InMemoryHotelRepo } from "../../src/repository/hotel_repository.js";
 import { type Hotel } from "../../src/types/hotel_type.js";
 import { describe, it, expect, beforeEach } from "@jest/globals";
 
-describe("InMemoryHotelSearchService", () => {
+describe("InMemoryHotelRepo", () => {
   const mockHotels: Hotel[] = [
     {
       id: 1,
@@ -10,14 +10,22 @@ describe("InMemoryHotelSearchService", () => {
       city: "New York",
       price: 220,
       rating: 4.8,
+      rooms: 10,
     },
-    { id: 2, name: "Sunny Beach", city: "Miami", price: 260, rating: 4.7 },
+    {
+      id: 2,
+      name: "Sunny Beach",
+      city: "Miami",
+      price: 260,
+      rating: 4.7,
+      rooms: 10,
+    },
   ];
 
-  let service: InMemoryHotelSearchService;
+  let service: InMemoryHotelRepo;
 
   beforeEach(() => {
-    service = new InMemoryHotelSearchService(mockHotels);
+    service = new InMemoryHotelRepo(mockHotels);
   });
 
   it("should return hotels that match the city name", () => {

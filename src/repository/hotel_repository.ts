@@ -1,11 +1,11 @@
 import {
   Acknowledgement,
   Hotel,
-  HotelSearchService,
+  hotelRepo,
   NotBookedError,
 } from "../types/hotel_type.js";
 
-export class InMemoryHotelSearchService implements HotelSearchService {
+export class InMemoryHotelRepo implements hotelRepo {
   private readonly hotels: Hotel[];
 
   constructor(hotels: Hotel[]) {
@@ -29,6 +29,13 @@ export class InMemoryHotelSearchService implements HotelSearchService {
     hotel_id: number,
     rooms: number,
   ): Acknowledgement | NotBookedError {
+    const hotel = this.searchHotelById(hotel_id);
+    if (hotel === undefined) {
+      return {
+        message: "Hotel not found",
+      };
+    }
+
     return {
       receiptId: "" + hotel_id + "   --- rooms" + rooms,
       message: "created booking",

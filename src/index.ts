@@ -1,10 +1,7 @@
 import { createApp } from "./controller/create_app.js";
-import {
-  parsePort,
-  getJwtSecret,
-  passwordUtility as createPasswordUtility,
-} from "./utils/utils.js";
-import { InMemoryHotelSearchService } from "./repository/in_mem.js";
+
+import { parsePort, parseSecret, createPassUtility } from "./utils/utils.js";
+import { InMemoryHotelRepo } from "./repository/hotel_repository.js";
 import { createInMemoryUserRepository } from "./repository/user_repository.js";
 import { createLoginService } from "./service/login_service.js";
 import { createRegisterService } from "./service/register_service.js";
@@ -15,13 +12,13 @@ import bcrypt from "bcrypt";
 
 const main = (): void => {
   const port = parsePort(process.env.PORT);
-  const jwtSecret = getJwtSecret(process.env.JWT_SECRET);
+  const jwtSecret = parseSecret(process.env.JWT_SECRET);
   const authenticateToken = createAuthenticateToken(jwtSecret);
 
   const userRepository = createInMemoryUserRepository();
-  const hotelSearchService = new InMemoryHotelSearchService(hotels);
+  const hotelSearchService = new InMemoryHotelRepo(hotels);
 
-  const passwordUtility = createPasswordUtility(
+  const passwordUtility = createPassUtility(
     (password) => bcrypt.hashSync(password, 2),
     bcrypt.compareSync,
   );

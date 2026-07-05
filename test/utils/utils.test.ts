@@ -1,22 +1,22 @@
 import { describe, it, expect } from "@jest/globals";
 import {
-  getJwtSecret,
+  parseSecret,
   hasInvalidCredentials,
   parsePort,
 } from "../../src/utils/utils";
 
-describe("getJwtSecret", () => {
+describe("parseSecret tests", () => {
   it("should return the provided secret when given a non-empty string", () => {
-    expect(getJwtSecret("my-secret")).toBe("my-secret");
+    expect(parseSecret("my-secret")).toBe("my-secret");
   });
 
   describe("fallback behavior", () => {
     it("should return fake-secret when given undefined", () => {
-      expect(getJwtSecret(undefined)).toBe("fake-secret");
+      expect(parseSecret(undefined)).toBe("fake-secret");
     });
 
     it("should return fake-secret when given an empty string", () => {
-      expect(getJwtSecret("")).toBe("fake-secret");
+      expect(parseSecret("")).toBe("fake-secret");
     });
   });
 });

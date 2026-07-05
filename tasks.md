@@ -66,3 +66,13 @@
 - [ ] **8. Update Main App Acceptance Tests**
   - File: `test/main/app.test.ts`
   - [ ] Update the initialization of `createLoginService` and `createRegisterService` in the `beforeAll` block to include a mock `PasswordUtility` (or use the real `createBcryptPasswordUtility` to test the full flow).
+
+  ***
+
+# side notes
+
+-- create test scripts to check end to end flow by hitting API in sequences
+example -
+```
+call register -> call login -> call book hotel
+call search

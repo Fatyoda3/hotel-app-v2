@@ -7,6 +7,7 @@ export const hotels: Hotel[] = [
     city: "New York",
     price: 220,
     rating: 4.8,
+    rooms: 10,
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const hotels: Hotel[] = [
     city: "New York",
     price: 180,
     rating: 4.5,
+    rooms: 10,
   },
   {
     id: 3,
@@ -21,5 +23,6 @@ export const hotels: Hotel[] = [
     city: "Miami",
     price: 260,
     rating: 4.7,
+    rooms: 10,
   },
 ];

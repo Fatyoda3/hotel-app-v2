@@ -3,7 +3,6 @@ import express, {
   type Request,
   type Response,
   type NextFunction,
-  RequestHandler,
 } from "express";
 import { AppDependencies, Middleware } from "../types/app_dependency_type.js";
 import { createHotelSearchHandler } from "./create_hotel_search_handler.js";
@@ -27,6 +26,7 @@ export const createApp = (
 
   const { hotelSearchService, loginService, registerService, bookingService } =
     dependencies;
+
   const { loggerUtility, authenticateToken } = middleware;
   app.use(createLogger(loggerUtility));
 
@@ -42,7 +42,7 @@ export const createApp = (
 
   app.post("/api/users/login", loginHandler);
   app.post("/api/users/register", registerHandler);
-  /* protected endpoints */
   app.post("/api/bookings", authenticateToken, bookingHandler);
+
   return app;
 };
