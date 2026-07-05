@@ -1,8 +1,9 @@
 import request from "supertest";
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import { createApp } from "../../src/controller/create_app.js";
-import { HotelSearchService } from "../../src/types/hotel_type.js";
+import { HotelRepo } from "../../src/types/hotel_type.js";
 import { LoginService, RegisterService } from "../../src/types/user_type.js";
+import { createValidateUser } from "../../src/middleware/create_validate_user.js";
 import {
   AppDependencies,
   Middleware,
@@ -19,19 +20,20 @@ describe("POST /api/users/login", () => {
 
     const dependencies: AppDependencies = {
       hotelSearchService: {
-        searchHotels: jest.fn<HotelSearchService["searchHotels"]>(),
-        searchHotelById: jest.fn<HotelSearchService["searchHotelById"]>(),
-        createBooking: jest.fn<HotelSearchService["createBooking"]>(),
+        searchHotels: jest.fn<HotelRepo["searchHotels"]>(),
+        searchHotelById: jest.fn<HotelRepo["searchHotelById"]>(),
+        createBooking: jest.fn<HotelRepo["createBooking"]>(),
       },
       loginService: mockLoginService,
       registerService: { register: jest.fn<RegisterService["register"]>() },
       bookingService: jest.fn<BookingService>(),
     };
-
+    const mock = createValidateUser();
     const middleware: Middleware = {
       loggerUtility: (message: string) => undefined,
       authenticateToken: (req: Request, res: Response, next: NextFunction) =>
         next(),
+      validateUser: mock,
     };
 
     app = createApp(dependencies, middleware);

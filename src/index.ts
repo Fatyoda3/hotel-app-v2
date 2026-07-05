@@ -1,5 +1,7 @@
 import { createApp } from "./controller/create_app.js";
 
+import bcrypt from "bcrypt";
+
 import { parsePort, parseSecret, createPassUtility } from "./utils/utils.js";
 import { InMemoryHotelRepo } from "./repository/hotel_repository.js";
 import { createInMemoryUserRepository } from "./repository/user_repository.js";
@@ -8,7 +10,6 @@ import { createRegisterService } from "./service/register_service.js";
 import { hotels } from "./hotels.js";
 import { bookingService } from "./service/booking_service.js";
 import { createAuthenticateToken } from "./middleware/create_authenticate_token.js";
-import bcrypt from "bcrypt";
 import { createValidateUser } from "./middleware/create_validate_user.js";
 
 const main = (): void => {
@@ -17,7 +18,7 @@ const main = (): void => {
   const authenticateToken = createAuthenticateToken(jwtSecret);
 
   const userRepository = createInMemoryUserRepository();
-  const hotelSearchService = new InMemoryHotelRepo(hotels);
+  const hotelRepo = new InMemoryHotelRepo(hotels);
 
   const passwordUtility = createPassUtility(
     (password) => bcrypt.hashSync(password, 2),
@@ -38,7 +39,7 @@ const main = (): void => {
 
   const app = createApp(
     {
-      hotelSearchService,
+      hotelRepo,
       loginService,
       registerService,
       bookingService,

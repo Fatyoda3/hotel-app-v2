@@ -1,33 +1,32 @@
 import request from "supertest";
 import { createApp } from "../../src/controller/create_app.js";
-import {
-  HotelSearchService,
-  Acknowledgement,
-} from "../../src/types/hotel_type.js";
+import { HotelRepo, Acknowledgement } from "../../src/types/hotel_type.js";
+
 import {
   AppDependencies,
   Middleware,
   BookingService,
 } from "../../src/types/app_dependency_type.js";
+
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import { Request, Response, NextFunction } from "express";
 
 describe("POST /api/bookings", () => {
   let app: ReturnType<typeof createApp>;
   let mockBookingService: jest.MockedFunction<BookingService>;
-  let mockHotelSearchService: jest.Mocked<HotelSearchService>;
+  let mockHotelRepo: jest.Mocked<HotelRepo>;
 
   beforeEach(() => {
-    mockHotelSearchService = {
-      searchHotels: jest.fn<HotelSearchService["searchHotels"]>(),
-      searchHotelById: jest.fn<HotelSearchService["searchHotelById"]>(),
-      createBooking: jest.fn<HotelSearchService["createBooking"]>(),
+    mockHotelRepo = {
+      searchHotels: jest.fn<HotelRepo["searchHotels"]>(),
+      searchHotelById: jest.fn<HotelRepo["searchHotelById"]>(),
+      createBooking: jest.fn<HotelRepo["createBooking"]>(),
     };
 
     mockBookingService = jest.fn<BookingService>();
 
     const dependencies: AppDependencies = {
-      hotelSearchService: mockHotelSearchService,
+      hotelRepo: mockHotelRepo,
       loginService: { login: jest.fn() as any },
       registerService: { register: jest.fn() as any },
       bookingService: mockBookingService,
@@ -35,8 +34,13 @@ describe("POST /api/bookings", () => {
 
     const middleware: Middleware = {
       loggerUtility: (message: string) => undefined,
+
       authenticateToken: (req: Request, res: Response, next: NextFunction) => {
-        // Mock the token authentication middleware by attaching a dummy user
+        res.locals.user = { username: "testuser" };
+        next();
+      },
+
+      validateUser: (req: Request, res: Response, next: NextFunction) => {
         res.locals.user = { username: "testuser" };
         next();
       },
@@ -51,7 +55,6 @@ describe("POST /api/bookings", () => {
       message: "created booking",
     };
 
-    // Setup our mocked booking service to return a successful acknowledgement
     mockBookingService.mockReturnValue(mockAck);
 
     const response = await request(app)
@@ -60,10 +63,6 @@ describe("POST /api/bookings", () => {
 
     expect(response.status).toBe(200);
     expect(response.body.acknowledgement).toEqual(mockAck);
-    expect(mockBookingService).toHaveBeenCalledWith(
-      1,
-      2,
-      mockHotelSearchService,
-    );
+    expect(mockBookingService).toHaveBeenCalledWith(1, 2, mockHotelRepo);
   });
 });

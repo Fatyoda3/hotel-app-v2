@@ -1,6 +1,6 @@
 import request from "supertest";
 import { createApp } from "../../src/controller/create_app.js";
-import { HotelSearchService } from "../../src/types/hotel_type.js";
+import { HotelRepo } from "../../src/types/hotel_type.js";
 import { LoginService, RegisterService } from "../../src/types/user_type.js";
 import {
   AppDependencies,
@@ -12,13 +12,13 @@ import { Request, Response, NextFunction } from "express";
 
 describe("GET /api/search/hotels", () => {
   let app: ReturnType<typeof createApp>;
-  let mockHotelSearchService: jest.Mocked<HotelSearchService>;
+  let mockHotelSearchService: jest.Mocked<HotelRepo>;
 
   beforeEach(() => {
     mockHotelSearchService = {
-      searchHotels: jest.fn<HotelSearchService["searchHotels"]>(),
-      searchHotelById: jest.fn<HotelSearchService["searchHotelById"]>(),
-      createBooking: jest.fn<HotelSearchService["createBooking"]>(),
+      searchHotels: jest.fn<HotelRepo["searchHotels"]>(),
+      searchHotelById: jest.fn<HotelRepo["searchHotelById"]>(),
+      createBooking: jest.fn<HotelRepo["createBooking"]>(),
     };
 
     const mockLoginService: LoginService = {
@@ -29,7 +29,7 @@ describe("GET /api/search/hotels", () => {
     };
 
     const dependencies: AppDependencies = {
-      hotelSearchService: mockHotelSearchService,
+      hotelRepo: mockHotelSearchService,
       loginService: mockLoginService,
       registerService: mockRegisterService,
       bookingService: jest.fn<BookingService>(),
@@ -39,6 +39,8 @@ describe("GET /api/search/hotels", () => {
       loggerUtility: (message: string) => undefined,
       authenticateToken: (req: Request, res: Response, next: NextFunction) =>
         next(),
+      // ADDED: validateUser is required by the Middleware interface
+      validateUser: (req: Request, res: Response, next: NextFunction) => next(),
     };
 
     app = createApp(dependencies, middleware);
@@ -53,7 +55,14 @@ describe("GET /api/search/hotels", () => {
 
   it("should return 200 and a list of hotels for a valid query", async () => {
     mockHotelSearchService.searchHotels.mockReturnValue([
-      { id: 1, name: "Mock Hotel", city: "London", price: 100, rating: 4.0 },
+      {
+        id: 1,
+        name: "Mock Hotel",
+        city: "London",
+        price: 100,
+        rating: 4.0,
+        rooms: 10,
+      },
     ]);
 
     const response = await request(app).get("/api/search/hotels?city=London");

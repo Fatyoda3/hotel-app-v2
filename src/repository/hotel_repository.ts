@@ -1,11 +1,11 @@
 import {
   Acknowledgement,
   Hotel,
-  hotelRepo,
+  HotelRepo,
   NotBookedError,
 } from "../types/hotel_type.js";
 
-export class InMemoryHotelRepo implements hotelRepo {
+export class InMemoryHotelRepo implements HotelRepo {
   private readonly hotels: Hotel[];
 
   constructor(hotels: Hotel[]) {

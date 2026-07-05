@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
-import { Acknowledgement, hotelRepo, NotBookedError } from "./hotel_type.js";
+import { Acknowledgement, HotelRepo, NotBookedError } from "./hotel_type.js";
 import type { LoginService, RegisterService } from "./user_type.js";
 
 export interface AppDependencies {
-  hotelSearchService: hotelRepo;
+  hotelRepo: HotelRepo;
   loginService: LoginService;
   registerService: RegisterService;
   bookingService: BookingService;
@@ -18,5 +18,5 @@ export interface Middleware {
 export type BookingService = (
   hotel_id: number,
   rooms: number,
-  hotelSearchService: hotelRepo,
+  hotelSearchService: HotelRepo,
 ) => Acknowledgement | NotBookedError;

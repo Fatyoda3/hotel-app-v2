@@ -1,14 +1,14 @@
 import { BookingService } from "../types/app_dependency_type.js";
 import {
   Acknowledgement,
-  hotelRepo,
+  HotelRepo,
   NotBookedError,
 } from "../types/hotel_type.js";
 
 export const bookingService: BookingService = (
   hotel_id: number,
   rooms: number,
-  hotelSearchService: hotelRepo,
+  hotelSearchService: HotelRepo,
 ) => {
   const acknowledgement = hotelSearchService.createBooking(hotel_id, rooms);
   return acknowledgement;

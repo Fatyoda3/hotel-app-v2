@@ -1,7 +1,7 @@
 import request from "supertest";
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import { createApp } from "../../src/controller/create_app.js";
-import { HotelSearchService } from "../../src/types/hotel_type.js";
+import { HotelRepo } from "../../src/types/hotel_type.js";
 import { RegisterService } from "../../src/types/user_type.js";
 import {
   AppDependencies,
@@ -9,22 +9,24 @@ import {
   BookingService,
 } from "../../src/types/app_dependency_type.js";
 import { Request, Response, NextFunction } from "express";
+// 1. Import the actual middleware
+import { createValidateUser } from "../../src/middleware/create_validate_user.js";
 
 describe("POST /api/users/register", () => {
   let app: ReturnType<typeof createApp>;
   let mockRegisterService: jest.Mocked<RegisterService>;
 
   beforeEach(() => {
-    const hotelSearchService = {
-      searchHotels: jest.fn<HotelSearchService["searchHotels"]>(),
-      searchHotelById: jest.fn<HotelSearchService["searchHotelById"]>(),
-      createBooking: jest.fn<HotelSearchService["createBooking"]>(),
+    const hotelRepo = {
+      searchHotels: jest.fn<HotelRepo["searchHotels"]>(),
+      searchHotelById: jest.fn<HotelRepo["searchHotelById"]>(),
+      createBooking: jest.fn<HotelRepo["createBooking"]>(),
     };
 
     mockRegisterService = { register: jest.fn<RegisterService["register"]>() };
 
     const dependencies: AppDependencies = {
-      hotelSearchService,
+      hotelRepo,
       loginService: { login: jest.fn() as any },
       registerService: mockRegisterService,
       bookingService: jest.fn<BookingService>(),
@@ -34,6 +36,8 @@ describe("POST /api/users/register", () => {
       loggerUtility: (message: string) => undefined,
       authenticateToken: (req: Request, res: Response, next: NextFunction) =>
         next(),
+      // 2. Replace the dummy mock with the actual validation middleware
+      validateUser: createValidateUser(),
     };
 
     app = createApp(dependencies, middleware);
@@ -55,10 +59,12 @@ describe("POST /api/users/register", () => {
   });
 
   it("should return error status if registration fails", async () => {
-    mockRegisterService.register.mockReturnValue({
-      success: false,
-      message: "User exists",
-    });
+    mockRegisterService.register.mockReturnValue(
+      Promise.resolve({
+        success: false,
+        message: "User exists",
+      }),
+    );
 
     const response = await request(app)
       .post("/api/users/register")

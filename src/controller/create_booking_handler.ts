@@ -7,7 +7,7 @@ import { searchHotel } from "../service/hotel_service.js";
 import { BookingService } from "../types/app_dependency_type.js";
 import {
   Acknowledgement,
-  hotelRepo,
+  HotelRepo,
   NotBookedError,
 } from "../types/hotel_type.js";
 import { type Request, type Response } from "express";
@@ -26,7 +26,7 @@ I have to add a middleware which will parse and attach the
 json parsed token
 */
 export const createBookingHandler = (
-  hotelSearchService: hotelRepo,
+  hotelSearchService: HotelRepo,
   bookingService: BookingService,
 ) => {
   return (request: Request, response: Response): void => {

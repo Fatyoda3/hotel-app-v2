@@ -48,7 +48,7 @@ describe("Hotel API Acceptance Tests", () => {
         };
 
     const dependencies: AppDependencies = {
-      hotelSearchService,
+      hotelRepo: hotelSearchService,
       loginService,
       registerService,
       bookingService: jest.fn<BookingService>(),
@@ -58,6 +58,13 @@ describe("Hotel API Acceptance Tests", () => {
       loggerUtility: () => undefined,
       authenticateToken: (req: Request, res: Response, next: NextFunction) =>
         next(),
+      validateUser: (req: Request, res: Response, next: NextFunction) => {
+        res.locals.user = {
+          username: req.body.username,
+          password: req.body.password,
+        };
+        next();
+      },
     };
 
     app = createApp(dependencies, middleware);

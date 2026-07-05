@@ -16,7 +16,7 @@ export interface Hotel {
   rooms: number;
 }
 
-export interface hotelRepo {
+export interface HotelRepo {
   searchHotels(city: string): Hotel[];
   searchHotelById(hotel_id: number): Hotel;
   createBooking(

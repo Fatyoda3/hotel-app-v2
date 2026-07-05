@@ -1,8 +1,8 @@
 import { searchHotel } from "../service/hotel_service.js";
-import { hotelRepo } from "../types/hotel_type.js";
+import { HotelRepo } from "../types/hotel_type.js";
 import { type Request, type Response } from "express";
 
-export const createHotelSearchHandler = (hotelSearchService: hotelRepo) => {
+export const createHotelSearchHandler = (hotelSearchService: HotelRepo) => {
   return (request: Request, response: Response): void => {
     const city = request.query.city;
     const result = searchHotel(city as string, hotelSearchService);
