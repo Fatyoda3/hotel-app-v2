@@ -11,3 +11,11 @@ export const searchHotel = (
   const hotels = hotelSearchService.searchHotels(city);
   return { hotels };
 };
+
+export const searchHotelById = (
+  hotel_id: number,
+  hotelSearchService: HotelSearchService,
+) => {
+  const hotel = hotelSearchService.searchHotelById(hotel_id);
+  return hotel;
+};

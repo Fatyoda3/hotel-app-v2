@@ -10,23 +10,16 @@ export const createLoginHandler = (loginService: LoginService) => {
       return;
     }
 
-    const usernameValue = body.username;
-    const passwordValue = body.password;
+    const { username, password } = body;
 
-    if (
-      typeof usernameValue !== "string" ||
-      typeof passwordValue !== "string"
-    ) {
+    if (typeof username !== "string" || typeof password !== "string") {
       response
         .status(400)
         .json({ error: "Username and password must be strings." });
       return;
     }
 
-    const result = loginService.login({
-      username: usernameValue,
-      password: passwordValue,
-    });
+    const result = loginService.login({ username, password });
 
     if (result.success === true && typeof result.token === "string") {
       response.set("Authorization", result.token);

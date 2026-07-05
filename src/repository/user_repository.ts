@@ -10,7 +10,7 @@ export const createInMemoryUserRepository = (): UserRepo => {
       );
     },
 
-    saveUser(user: User): void {
+    async saveUser(user: User): Promise<void> {
       users.push(user);
     },
   };

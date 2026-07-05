@@ -1,11 +1,14 @@
 import request from "supertest";
 import { jest, describe, it, expect, beforeEach } from "@jest/globals";
 import { createApp } from "../../src/controller/create_app.js";
+import { HotelSearchService } from "../../src/types/hotel_type.js";
+import { LoginService, RegisterService } from "../../src/types/user_type.js";
 import {
   AppDependencies,
-  HotelSearchService,
-} from "../../src/types/hotel_type.js";
-import { LoginService, RegisterService } from "../../src/types/user_type.js";
+  Middleware,
+  BookingService,
+} from "../../src/types/app_dependency_type.js";
+import { Request, Response, NextFunction } from "express";
 
 describe("POST /api/users/login", () => {
   let app: ReturnType<typeof createApp>;
@@ -13,15 +16,25 @@ describe("POST /api/users/login", () => {
 
   beforeEach(() => {
     mockLoginService = { login: jest.fn<LoginService["login"]>() };
+
     const dependencies: AppDependencies = {
       hotelSearchService: {
         searchHotels: jest.fn<HotelSearchService["searchHotels"]>(),
+        searchHotelById: jest.fn<HotelSearchService["searchHotelById"]>(),
+        createBooking: jest.fn<HotelSearchService["createBooking"]>(),
       },
       loginService: mockLoginService,
       registerService: { register: jest.fn<RegisterService["register"]>() },
-      loggerUtility: (message) => undefined,
+      bookingService: jest.fn<BookingService>(),
     };
-    app = createApp(dependencies);
+
+    const middleware: Middleware = {
+      loggerUtility: (message: string) => undefined,
+      authenticateToken: (req: Request, res: Response, next: NextFunction) =>
+        next(),
+    };
+
+    app = createApp(dependencies, middleware);
   });
 
   it("should return 400 if body is entirely missing", async () => {

@@ -1,19 +1,22 @@
 import { describe, it, expect, beforeEach } from "@jest/globals";
 import { createRegisterService } from "../../src/service/register_service.js";
 import { createInMemoryUserRepository } from "../../src/repository/user_repository.js";
-import { type UserRepository } from "../../src/types/user_type.js";
+import { type UserRepo } from "../../src/types/user_type.js";
 
 describe("Register Service", () => {
-  let userRepository: UserRepository;
+  let userRepository: UserRepo;
   let registerService: ReturnType<typeof createRegisterService>;
 
   beforeEach(() => {
     userRepository = createInMemoryUserRepository();
-    registerService = createRegisterService(userRepository);
+    registerService = createRegisterService(userRepository, {
+      compare: (password, hashed) => password === hashed,
+      encrypt: (password) => password,
+    });
   });
 
-  it("should successfully register a new user", () => {
-    const result = registerService.register({
+  it("should successfully register a new user", async () => {
+    const result = await registerService.register({
       username: "newuser",
       password: "password123",
     });
@@ -21,20 +24,22 @@ describe("Register Service", () => {
     expect(result.user?.username).toBe("newuser");
   });
 
-  it("should fail if username or password is empty", () => {
-    const result = registerService.register({ username: "", password: "123" });
+  it("should fail if username or password is empty", async () => {
+    const result = await registerService.register({
+      username: "",
+      password: "123",
+    });
     expect(result.success).toBe(false);
-    expect(result.message).toBe("Username, and password are required."); // Adjust to your actual error message
+    expect(result.message).toBe("Username, and password are required.");
   });
 
-  it("should fail if user already exists", () => {
-    // Register once
+  it("should fail if user already exists", async () => {
     registerService.register({
       username: "existinguser",
       password: "password123",
     });
-    // Try again
-    const result = registerService.register({
+
+    const result = await registerService.register({
       username: "existinguser",
       password: "newpassword",
     });

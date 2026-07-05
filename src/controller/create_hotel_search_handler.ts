@@ -1,4 +1,4 @@
-import { searchHotel } from "../service/search_service.js";
+import { searchHotel } from "../service/hotel_service.js";
 import { HotelSearchService } from "../types/hotel_type.js";
 import { type Request, type Response } from "express";
 

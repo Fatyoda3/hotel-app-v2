@@ -37,10 +37,10 @@ export interface RegisterResult {
 }
 
 export interface RegisterService {
-  register(request: RegisterRequest): RegisterResult;
+  register(request: RegisterRequest): Promise<RegisterResult>;
 }
 
 export interface UserRepo {
   findUserByUsername(username: string): User | undefined;
-  saveUser(user: User): void;
+  saveUser(user: User): Promise<void>;
 }

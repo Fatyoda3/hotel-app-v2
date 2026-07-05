@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import * as T from "../types/user_type.js";
-import { hasInvalidCredentials } from "../utils/utils.js";
-
+import { hasInvalidCredentials, PasswordUtility } from "../utils/utils.js";
+import bcrypt from "bcrypt";
 const createToken = (user: T.PublicUser, jwtSecret: string): string => {
   const payload = { sub: user.id, username: user.username };
   return jwt.sign(payload, jwtSecret, { expiresIn: "45m" });
@@ -10,6 +10,7 @@ const createToken = (user: T.PublicUser, jwtSecret: string): string => {
 export const createLoginService = (
   userRepo: T.UserRepo,
   secret: string,
+  passwordUtility: PasswordUtility,
 ): T.LoginService => {
   return {
     login(request: T.LoginRequest): T.LoginResult {
@@ -24,7 +25,10 @@ export const createLoginService = (
         };
       }
 
-      if (user === undefined || user.password !== password) {
+      if (
+        user === undefined ||
+        !passwordUtility.compare(password, user.password)
+      ) {
         return {
           success: false,
           message: "Invalid credentials.",

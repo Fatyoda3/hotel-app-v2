@@ -1,4 +1,9 @@
-import { Hotel, HotelSearchService } from "../types/hotel_type.js";
+import {
+  Acknowledgement,
+  Hotel,
+  HotelSearchService,
+  NotBookedError,
+} from "../types/hotel_type.js";
 
 export class InMemoryHotelSearchService implements HotelSearchService {
   private readonly hotels: Hotel[];
@@ -13,5 +18,20 @@ export class InMemoryHotelSearchService implements HotelSearchService {
     return this.hotels.filter((hotel: Hotel) =>
       hotel.city.toLowerCase().includes(sanitizedCityName),
     );
+  }
+
+  public searchHotelById(hotel_id: number): Hotel {
+    const hotel = this.hotels.find((hotel) => hotel.id === hotel_id)!;
+    return hotel;
+  }
+
+  public createBooking(
+    hotel_id: number,
+    rooms: number,
+  ): Acknowledgement | NotBookedError {
+    return {
+      receiptId: "" + hotel_id + "   --- rooms" + rooms,
+      message: "created booking",
+    };
   }
 }

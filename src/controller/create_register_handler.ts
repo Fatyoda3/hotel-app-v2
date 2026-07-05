@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import { type RegisterService } from "../types/user_type.js";
 
 export const createRegisterHandler = (registerService: RegisterService) => {
-  return (request: Request, response: Response): void => {
+  return async (request: Request, response: Response): Promise<void> => {
     const body = request.body;
 
     if (body === undefined) {
@@ -10,8 +10,7 @@ export const createRegisterHandler = (registerService: RegisterService) => {
       return;
     }
 
-    const username = body.username;
-    const password = body.password;
+    const { username, password } = body;
 
     if (typeof username !== "string" || typeof password !== "string") {
       response
@@ -20,7 +19,7 @@ export const createRegisterHandler = (registerService: RegisterService) => {
       return;
     }
 
-    const result = registerService.register({ username, password });
+    const result = await registerService.register({ username, password });
 
     if (result.success === true) {
       response.status(201).json(result);

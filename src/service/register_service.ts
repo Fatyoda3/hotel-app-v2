@@ -4,13 +4,14 @@ import {
   type RegisterService,
   type UserRepo,
 } from "../types/user_type.js";
-import { hasInvalidCredentials } from "../utils/utils.js";
+import { hasInvalidCredentials, type PasswordUtility } from "../utils/utils.js";
 
 export const createRegisterService = (
   userRepository: UserRepo,
+  passwordUtility: PasswordUtility,
 ): RegisterService => {
   return {
-    register(request: RegisterRequest): RegisterResult {
+    async register(request: RegisterRequest): Promise<RegisterResult> {
       const username = request.username.trim();
       const password = request.password.trim();
 
@@ -30,9 +31,15 @@ export const createRegisterService = (
         };
       }
 
-      const newUser = { id: crypto.randomUUID(), username, password };
+      const hashedPassword = passwordUtility.encrypt(password);
 
-      userRepository.saveUser(newUser);
+      const newUser = {
+        id: crypto.randomUUID(),
+        username,
+        password: hashedPassword,
+      };
+
+      await userRepository.saveUser(newUser);
 
       return {
         success: true,

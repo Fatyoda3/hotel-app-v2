@@ -1,7 +1,14 @@
-import { type LoginService, type RegisterService } from "./user_type.js";
+export interface Acknowledgement {
+  receiptId: string;
+  message: string;
+}
+
+export interface NotBookedError {
+  message: string;
+}
 
 export interface Hotel {
-  id: string;
+  id: number;
   name: string;
   city: string;
   price: number;
@@ -10,11 +17,9 @@ export interface Hotel {
 
 export interface HotelSearchService {
   searchHotels(city: string): Hotel[];
-}
-
-export interface AppDependencies {
-  hotelSearchService: HotelSearchService;
-  loginService: LoginService;
-  registerService: RegisterService;
-  loggerUtility: (message: string) => void;
+  searchHotelById(hotel_id: number): Hotel;
+  createBooking(
+    hotel_id: number,
+    rooms: number,
+  ): Acknowledgement | NotBookedError;
 }

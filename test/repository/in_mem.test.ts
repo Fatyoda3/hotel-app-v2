@@ -1,16 +1,17 @@
 import { InMemoryHotelSearchService } from "../../src/repository/in_mem.js";
 import { type Hotel } from "../../src/types/hotel_type.js";
 import { describe, it, expect, beforeEach } from "@jest/globals";
+
 describe("InMemoryHotelSearchService", () => {
   const mockHotels: Hotel[] = [
     {
-      id: "1",
+      id: 1,
       name: "Grand Central",
       city: "New York",
       price: 220,
       rating: 4.8,
     },
-    { id: "2", name: "Sunny Beach", city: "Miami", price: 260, rating: 4.7 },
+    { id: 2, name: "Sunny Beach", city: "Miami", price: 260, rating: 4.7 },
   ];
 
   let service: InMemoryHotelSearchService;
@@ -34,5 +35,19 @@ describe("InMemoryHotelSearchService", () => {
   it("should return an empty array if no hotels match", () => {
     const results = service.searchHotels("Chicago");
     expect(results).toHaveLength(0);
+  });
+
+  it("should return a hotel by its ID", () => {
+    const result = service.searchHotelById(1);
+    expect(result).toBeDefined();
+    expect(result.name).toBe("Grand Central");
+  });
+
+  it("should return a booking acknowledgement with correct formatting", () => {
+    const result = service.createBooking(1, 2);
+    expect(result).toEqual({
+      receiptId: "1   --- rooms2",
+      message: "created booking",
+    });
   });
 });

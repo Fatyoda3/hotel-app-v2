@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+
 export const parsePort = (port: string | undefined) => {
   const validPorts = [
     3000, 3001, 4000, 5000, 5173, 5500, 7000, 8000, 8080, 8081, 8088, 8888,
@@ -24,3 +26,13 @@ export const hasInvalidCredentials = (
 ): boolean => {
   return username.trim() === "" || password.trim() === "";
 };
+type EncryptFn = (password: string) => string;
+type CompareFn = (password: string, hashed: string) => boolean;
+
+export const passwordUtility = (encryptFn: EncryptFn, compareFn: CompareFn) => {
+  return {
+    encrypt: encryptFn,
+    compare: compareFn,
+  };
+};
+export type PasswordUtility = ReturnType<typeof passwordUtility>;

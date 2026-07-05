@@ -10,9 +10,11 @@ describe("Login Service", () => {
 
   beforeEach(() => {
     userRepository = createInMemoryUserRepository();
-    loginService = createLoginService(userRepository, jwtSecret);
+    loginService = createLoginService(userRepository, jwtSecret, {
+      compare: (password, hashed) => password === hashed,
+      encrypt: (password) => password,
+    });
 
-    // Seed a test user
     userRepository.saveUser({
       id: "user-1",
       username: "testuser",
