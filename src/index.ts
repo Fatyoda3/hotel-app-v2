@@ -9,6 +9,7 @@ import { hotels } from "./hotels.js";
 import { bookingService } from "./service/booking_service.js";
 import { createAuthenticateToken } from "./middleware/create_authenticate_token.js";
 import bcrypt from "bcrypt";
+import { createValidateUser } from "./middleware/create_validate_user.js";
 
 const main = (): void => {
   const port = parsePort(process.env.PORT);
@@ -33,6 +34,8 @@ const main = (): void => {
     passwordUtility,
   );
 
+  const validateUser = createValidateUser();
+
   const app = createApp(
     {
       hotelSearchService,
@@ -43,6 +46,7 @@ const main = (): void => {
     {
       loggerUtility: console.log,
       authenticateToken,
+      validateUser,
     },
   );
 

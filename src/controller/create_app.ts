@@ -27,7 +27,7 @@ export const createApp = (
   const { hotelSearchService, loginService, registerService, bookingService } =
     dependencies;
 
-  const { loggerUtility, authenticateToken } = middleware;
+  const { loggerUtility, authenticateToken, validateUser } = middleware;
   app.use(createLogger(loggerUtility));
 
   const hotelSearchHandler = createHotelSearchHandler(hotelSearchService);
@@ -39,9 +39,12 @@ export const createApp = (
   );
 
   app.get("/api/search/hotels", hotelSearchHandler);
-
-  app.post("/api/users/login", loginHandler);
-  app.post("/api/users/register", registerHandler);
+  /* 
+ what to do add zod validation for middleware on login and register handler route
+ so I don't have to pollute the login or register
+*/
+  app.post("/api/users/login", validateUser, loginHandler);
+  app.post("/api/users/register", validateUser, registerHandler);
   app.post("/api/bookings", authenticateToken, bookingHandler);
 
   return app;

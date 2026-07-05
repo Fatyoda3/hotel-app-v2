@@ -12,6 +12,7 @@ export interface AppDependencies {
 export interface Middleware {
   loggerUtility: (message: string) => void;
   authenticateToken: RequestHandler;
+  validateUser: RequestHandler;
 }
 
 export type BookingService = (

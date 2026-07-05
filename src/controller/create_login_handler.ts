@@ -3,36 +3,19 @@ import { type LoginService } from "../types/user_type.js";
 
 export const createLoginHandler = (loginService: LoginService) => {
   return (request: Request, response: Response): void => {
-    const body = request.body;
+    const { username, password } = response.locals.user;
 
-    if (body === undefined) {
-      response.status(400).json({ error: "Request body is required." });
-      return;
-    }
-
-    const { username, password } = body;
-
-    if (typeof username !== "string" || typeof password !== "string") {
-      response
-        .status(400)
-        .json({ error: "Username and password must be strings." });
-      return;
-    }
-
-    const result = loginService.login({ username, password });
-
-    if (result.success === true && typeof result.token === "string") {
-      response.set("Authorization", result.token);
-      response.status(200).json({
-        success: true,
-        message: result.message,
-      });
-      return;
-    }
-
-    response.status(401).json({
-      success: false,
-      message: result.message,
+    const { success, message, token } = loginService.login({
+      username,
+      password,
     });
+
+    if (success && typeof token === "string") {
+      response.set("Authorization", token);
+      response.status(200).json({ success, message });
+      return;
+    }
+
+    response.status(401).json({ success, message });
   };
 };
